@@ -27,6 +27,7 @@
             margin-top: 0.5rem;
         }
         #bg,
+        img,
         select,
         button {
             display: block;
@@ -109,8 +110,10 @@
         <img id="bg" src="bg.webp" width="1920" height="1080" alt="Jagged Alliance 2 wallpaper">
         <div class="controls">
             <img id="avatar" src="faces/BARRY.png" width="106" height="122" alt="Avatar of BARRY">
-            <select name="merc"></select>
-            <select name="quote"></select>
+            <label for="merc">Merc:</label>
+            <select id="merc"></select>
+            <label for="quote">Quote:</label>
+            <select id="quote"></select>
             <input type="radio" id="langChoice1" name="lang" value="en" checked />
             <label for="langChoice1">EN</label>
             <input type="radio" id="langChoice2" name="lang" value="de" />

@@ -252,7 +252,7 @@ function setImage(face) {
 	mercImage.alt = 'Avatar of ' + face;
 }
 
-const mercSelect = document.querySelector('select[name=merc]');
+const mercSelect = document.getElementById('merc');
 for (let i = 0; i < NPCIDs.length; i++) {
 	createOption(mercSelect, NPCIDs, i);
 }
@@ -278,7 +278,7 @@ mercSelect.addEventListener('change', () => {
 	createQuotes();
 });
 
-const quoteSelect = document.querySelector('select[name=quote]');
+const quoteSelect = document.getElementById('quote');
 createQuotes();
 
 function padToThree(num) {
