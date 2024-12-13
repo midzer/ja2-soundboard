@@ -298,24 +298,24 @@ function playQuote(merc, quote) {
 	if (quote === 79) {
 		return alert(`${DialogQuoteIDs[quote]} is a dummy without audio.`);
 	}
-	if (!audio) {
-		audio = new Audio();
-		audio.addEventListener('canplaythrough', () => {
-			audio.play();
+	if (!audioQuote) {
+		audioQuote = new Audio();
+		audioQuote.addEventListener('canplaythrough', () => {
+			audioQuote.play();
 		});
 	}
-	audio.src = 'speech/' + getLang() + '/' + padToThree(merc) + '_' + padToThree(quote) + '.webm';
-	audio.load();
+	audioQuote.src = 'speech/' + getLang() + '/' + padToThree(merc) + '_' + padToThree(quote) + '.webm';
+	audioQuote.load();
 }
 
-let audio;
-const playButton = document.getElementById('play');
-playButton.addEventListener('click', () => {
+let audioQuote;
+const playQuoteButton = document.getElementById('playQuote');
+playQuoteButton.addEventListener('click', () => {
 	playQuote(mercSelect.selectedIndex, quoteSelect.selectedIndex);
 });
 
-const randomButton = document.getElementById('random');
-randomButton.addEventListener('click', () => {
+const randomQuoteButton = document.getElementById('randomQuote');
+randomQuoteButton.addEventListener('click', () => {
 	const mercIndex = Math.floor(Math.random() * NPCIDs.length);
 	mercSelect.selectedIndex = mercIndex;
 	setImage(NPCIDs[mercIndex]);
@@ -339,6 +339,33 @@ copyButton.addEventListener('click', event => {
       '?merc=' + mercSelect.selectedIndex +
       '&quote=' + quoteSelect.selectedIndex +
 	  '&lang=' + getLang());
+});
+
+const musicSelect = document.getElementById('music');
+musicSelect.addEventListener('change', () => {
+	if (audioMusic && !audioMusic.paused) {
+		audioMusic.src = 'music/' + musicSelect.options[musicSelect.selectedIndex].text + '.webm';
+		audioMusic.load();
+		audioMusic.play();
+	}
+});
+
+let audioMusic;
+const playMusicButton = document.getElementById('playMusic');
+playMusicButton.addEventListener('click', () => {
+	if (!audioMusic) {
+		audioMusic = new Audio();
+		audioMusic.loop = true;
+		audioMusic.src = 'music/' + musicSelect.options[musicSelect.selectedIndex].text + '.webm';
+	}
+	if (audioMusic.paused) {
+		audioMusic.play();
+		playMusicButton.textContent = 'Pause';
+	}
+	else {
+		audioMusic.pause();
+		playMusicButton.textContent = 'Play';
+	}
 });
 
 document.addEventListener("DOMContentLoaded", () => {

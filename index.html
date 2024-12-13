@@ -34,6 +34,7 @@
         button {
             display: block;
         }
+        fieldset,
         label {
             color: #fff;
         }
@@ -43,6 +44,9 @@
             height: auto;
         }
         .controls {
+            display: flex;
+            flex-direction: column;
+            align-items: start;
             margin-top: 0.5rem;
             margin-left: 0.5rem;
         }
@@ -111,18 +115,39 @@
     <div class="container">
         <img id="bg" src="bg.webp" width="1920" height="1080" alt="Jagged Alliance 2 wallpaper">
         <div class="controls">
-            <img id="avatar" src="faces/BARRY.png" width="106" height="122" alt="Avatar of BARRY">
-            <label for="merc">Merc:</label>
-            <select id="merc"></select>
-            <label for="quote">Quote:</label>
-            <select id="quote"></select>
-            <input type="radio" id="langChoice1" name="lang" value="en" checked />
-            <label for="langChoice1">EN</label>
-            <input type="radio" id="langChoice2" name="lang" value="de" />
-            <label for="langChoice2">DE</label>
-            <button id="play">Play</button>
-            <button id="random">Random</button>
-            <button id="copy">Copy URL</button>
+            <fieldset>
+                <legend>Speech</legend>
+                <img id="avatar" src="faces/BARRY.png" width="106" height="122" alt="Avatar of BARRY">
+                <select id="merc" aria-label="Merc"></select>
+                <select id="quote" aria-label="Quote"></select>
+                <input type="radio" id="langChoice1" name="lang" value="en" checked />
+                <label for="langChoice1">EN</label>
+                <input type="radio" id="langChoice2" name="lang" value="de" />
+                <label for="langChoice2">DE</label>
+                <button id="playQuote">Play</button>
+                <button id="randomQuote">Random</button>
+                <button id="copy">Copy URL</button>
+            </fieldset>
+            <fieldset>
+                <legend>Music</legend>
+                <select id="music" aria-label="Music">
+                    <option>BATTLEA</option>
+                    <option>CREATUREBATTLE</option>
+                    <option>CREEPY</option>
+                    <option>DEATH</option>
+                    <option>MARIMBAD2</option>
+                    <option>MENUMIX1</option>
+                    <option>NOTHINGA</option>
+                    <option>NOTHINGB</option>
+                    <option>NOTHINGC</option>
+                    <option>NOTHINGD</option>
+                    <option>TENSORA</option>
+                    <option>TENSORB</option>
+                    <option>TENSORC</option>
+                    <option>TRIUMPH</option>
+                </select>
+                <button id="playMusic">Play</button>
+            </fieldset>
         </div>
     </div>
     <a href="https://github.com/midzer/ja2-soundboard" class="github-corner" aria-label="View source on GitHub">
