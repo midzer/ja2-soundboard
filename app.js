@@ -224,6 +224,16 @@ const NPCIDs =
 	'MADDOG'
 ];
 
+const mercSelect = document.getElementById('merc');
+const quoteSelect = document.getElementById('quote');
+const mercImage = document.getElementById('avatar');
+const playQuoteButton = document.getElementById('playQuote');
+const copyButton = document.getElementById('copy');
+const musicSelect = document.getElementById('music');
+const playMusicButton = document.getElementById('playMusic');
+const randomHover = document.getElementById('randomHover');
+const textDisplay = document.getElementById('text');
+
 function createOption(select, array, i) {
 	const option = document.createElement('option');
 	option.value = i;
@@ -232,131 +242,125 @@ function createOption(select, array, i) {
 }
 
 function createQuotes() {
-	// Clear
-	while (quoteSelect.firstChild) {
-		quoteSelect.removeChild(quoteSelect.lastChild);
-	}
-	let length = DialogQuoteIDs.length;
-	if (mercSelect.selectedIndex > 39) {
-		// Non-AIM mercs have less quotes
-		length -= 38;
-	}
-	for (let i = 0; i < length; i++) {
-		createOption(quoteSelect, DialogQuoteIDs, i);
-	}
+	quoteSelect.innerHTML = '';
+
+	const isAIMMerc = mercSelect.selectedIndex <= 39;
+    const totalQuotes = DialogQuoteIDs.length;
+    const skipStartIndex = isAIMMerc ? 0 : totalQuotes - 38;
+
+	for (let i = 0; i < DialogQuoteIDs.length; i++) {
+        // If not AIM merc, skip the last 38 quotes
+        if (!isAIMMerc && i >= skipStartIndex) continue;
+
+        createOption(quoteSelect, DialogQuoteIDs, i);
+    }
 }
 
 function setImage(face) {
-	if (face === 'RPC65' || face === 'RPC71') face = 'ROBOT';
+	if (['RPC65', 'RPC71'].includes(face)) face = 'ROBOT';
 	mercImage.src = 'faces/' + face + '.png';
 	mercImage.alt = 'Avatar of ' + face;
 }
 
-const mercSelect = document.getElementById('merc');
 for (let i = 0; i < NPCIDs.length; i++) {
 	createOption(mercSelect, NPCIDs, i);
 }
 
-const mercImage = document.getElementById('avatar');
 mercSelect.addEventListener('change', () => {
-	let face = mercSelect.options[mercSelect.selectedIndex].text;
+	const idx = mercSelect.selectedIndex;
+	let face = mercSelect.options[idx].text;
 
-	// Check special IMP case
-	switch (mercSelect.selectedIndex) {
-		case 51:
-		case 52:
-		case 53:
-			face = 'IMP_M' + Math.floor(Math.random() * 8)
-			break;
-		case 54:
-		case 55:
-		case 56:
-			face = 'IMP_W' + Math.floor(Math.random() * 8)
-			break;
-	}
+	if (idx >= 51 && idx <= 53) face = 'IMP_M' + Math.floor(Math.random() * 8);
+	if (idx >= 54 && idx <= 56) face = 'IMP_W' + Math.floor(Math.random() * 8);
+
 	setImage(face);
 	createQuotes();
 });
-
-const quoteSelect = document.getElementById('quote');
-createQuotes();
 
 function padToThree(num) {
 	return String(num).padStart(3, '0');
 }
 
-function getLang() {
-	return document.querySelector('input[name=lang]:checked').value;
-}
+function playQuote(mercIndex, quoteIndex) {
+	if ([62, 65, 71].includes(mercIndex)) {
+        return alert(`${NPCIDs[mercIndex]} has no audio.`);
+    }
 
-function playQuote(merc, quote) {
-	if (merc === 62 ||
-		merc === 65 ||
-		merc === 71) {
-		return alert(`${NPCIDs[merc]} has no audio.`);
-	}
-	if (quote === 79) {
-		return alert(`${DialogQuoteIDs[quote]} is a dummy without audio.`);
-	}
-	if (!audioQuote) {
-		audioQuote = new Audio();
-		audioQuote.addEventListener('canplaythrough', () => {
-			audioQuote.play();
-		});
-	}
-	audioQuote.src = 'speech/' + getLang() + '/' + padToThree(merc) + '_' + padToThree(quote) + '.webm';
-	audioQuote.load();
+    if (quoteIndex === 79) {
+        return alert(`${DialogQuoteIDs[quoteIndex]} is a dummy without audio.`);
+    }
+
+    if (!audioQuote) {
+        audioQuote = new Audio();
+        audioQuote.addEventListener('canplaythrough', () => {
+            audioQuote.play();
+        });
+    }
+
+	const fileBase = `${padToThree(mercIndex)}_${padToThree(quoteIndex)}`;
+
+    audioQuote.src = `speech/${fileBase}.webm`;
+    audioQuote.load();
+
+	fetch(`text/${fileBase}.txt`)
+		.then(r => r.ok ? r.text() : Promise.reject(r))
+		.then(text => {
+			textDisplay.textContent = text.slice(1);
+		})
+		.catch(error => console.error('Failed to load text:', error));
 }
 
 let audioQuote;
-const playQuoteButton = document.getElementById('playQuote');
 playQuoteButton.addEventListener('click', () => {
-	playQuote(mercSelect.selectedIndex, quoteSelect.selectedIndex);
+	const mercIndex = mercSelect.selectedIndex;
+    const quoteIndex = parseInt(quoteSelect.options[quoteSelect.selectedIndex].value, 10);
+    playQuote(mercIndex, quoteIndex);
 });
 
-const randomQuoteButton = document.getElementById('randomQuote');
-randomQuoteButton.addEventListener('click', () => {
+function selectRandom() {
 	const mercIndex = Math.floor(Math.random() * NPCIDs.length);
 	mercSelect.selectedIndex = mercIndex;
+
 	setImage(NPCIDs[mercIndex]);
 	createQuotes();
-	const quoteIndex = Math.floor(Math.random() * quoteSelect.children.length);
-	quoteSelect.selectedIndex = quoteIndex;
-	playQuote(mercIndex, quoteIndex);
-});
 
-const copyButton = document.getElementById('copy');
+	const options = quoteSelect.options;
+	const quoteOption = options[Math.floor(Math.random() * options.length)];
+	quoteSelect.value = quoteOption.value;
+
+	const quoteIndex = parseInt(quoteOption.value, 10);
+	playQuote(mercIndex, quoteIndex);
+}
+
+randomHover.addEventListener('click', selectRandom);
+
 copyButton.addEventListener('click', event => {
 	const btn = event.target;
     const oldText = btn.textContent;
+
     btn.textContent = 'URL copied!';
-    setTimeout(() => {
-	    btn.textContent = oldText;
-    }, 1337);
+    setTimeout(() => (btn.textContent = oldText), 1337);
+
     navigator.clipboard.writeText(
-      window.location.origin +
-      window.location.pathname +
-      '?merc=' + mercSelect.selectedIndex +
-      '&quote=' + quoteSelect.selectedIndex +
-	  '&lang=' + getLang());
+		`${window.location.origin}${window.location.pathname}` +
+		`?merc=${mercSelect.selectedIndex}&quote=${quoteSelect.selectedIndex}`
+	);
 });
 
-const musicSelect = document.getElementById('music');
 musicSelect.addEventListener('change', () => {
 	if (audioMusic && !audioMusic.paused) {
-		audioMusic.src = 'music/' + musicSelect.options[musicSelect.selectedIndex].text + '.webm';
+		audioMusic.src = `music/${musicSelect.value}.webm`;
 		audioMusic.load();
 		audioMusic.play();
 	}
 });
 
 let audioMusic;
-const playMusicButton = document.getElementById('playMusic');
 playMusicButton.addEventListener('click', () => {
 	if (!audioMusic) {
 		audioMusic = new Audio();
 		audioMusic.loop = true;
-		audioMusic.src = 'music/' + musicSelect.options[musicSelect.selectedIndex].text + '.webm';
+		audioMusic.src = `music/${musicSelect.value}.webm`;
 	}
 	if (audioMusic.paused) {
 		audioMusic.play();
@@ -369,23 +373,23 @@ playMusicButton.addEventListener('click', () => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-	const query = window.location.search;
-	if (!query) {
-		return;
+	const params = new URLSearchParams(window.location.search);
+    const mercIndex = parseInt(params.get('merc'), 10);
+    const quoteIndex = parseInt(params.get('quote'), 10);
+
+    if (!Number.isNaN(mercIndex) && NPCIDs[mercIndex]) {
+        mercSelect.selectedIndex = mercIndex;
+        setImage(NPCIDs[mercIndex]);
+        createQuotes();
+
+        for (let i = 0; i < quoteSelect.length; i++) {
+            if (parseInt(quoteSelect.options[i].value, 10) === quoteIndex) {
+                quoteSelect.selectedIndex = i;
+                break;
+            }
+        }
+    }
+	else {
+		selectRandom();
 	}
-	const params = new URLSearchParams(query);
-	const mercIndex = params.get('merc');
-	if (!mercIndex || NPCIDs[mercIndex] === undefined) {
-		return;
-	}
-	mercSelect.selectedIndex = mercIndex;
-	setImage(NPCIDs[mercIndex]);
-	createQuotes();
-	const quoteIndex = params.get('quote');
-	if (!quoteIndex || DialogQuoteIDs[quoteIndex] === undefined) {
-		return;
-	}
-	quoteSelect.selectedIndex = quoteIndex;
-	const lang = params.get('lang');
-	document.querySelector('input[value=' + lang + ']').checked = true;
 });
