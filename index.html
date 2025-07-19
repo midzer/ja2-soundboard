@@ -23,8 +23,8 @@
             max-width: 106px;
         }
         select:not(:first-child),
-        button:not(:first-child) {
-            margin-top: 0.25rem;
+        button:not(:first-child,#randomHover) {
+            margin-top: 0.5rem;
         }
         #bg,
         img,
@@ -46,8 +46,9 @@
         .controls {
             display: grid;
             grid-template-columns: auto auto;
+            align-items: flex-start;
             max-width: 276px;
-            margin: 0.25rem;
+            margin: 0.5rem;
         }
         .controls > :first-child {
             grid-row: 1 / 4;
@@ -55,7 +56,7 @@
         pre {
             white-space: pre-wrap;
             margin: 0;
-            font-size: 10px;
+            font-size: 11px;
         }
         .img-wrapper {
             position: relative;
