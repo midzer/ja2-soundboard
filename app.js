@@ -310,12 +310,14 @@ function playQuote(mercIndex, quoteIndex) {
 		.catch(error => console.error('Failed to load text:', error));
 }
 
-let audioQuote;
-playQuoteButton.addEventListener('click', () => {
+function play() {
 	const mercIndex = mercSelect.selectedIndex;
     const quoteIndex = parseInt(quoteSelect.options[quoteSelect.selectedIndex].value);
     playQuote(mercIndex, quoteIndex);
-});
+}
+
+let audioQuote;
+playQuoteButton.addEventListener('click', play);
 
 function selectRandom() {
 	const mercIndex = Math.floor(Math.random() * NPCIDs.length);
@@ -327,12 +329,12 @@ function selectRandom() {
 	const options = quoteSelect.options;
 	const quoteOption = options[Math.floor(Math.random() * options.length)];
 	quoteSelect.value = quoteOption.value;
-
-	const quoteIndex = parseInt(quoteOption.value);
-	playQuote(mercIndex, quoteIndex);
 }
 
-randomHover.addEventListener('click', selectRandom);
+randomHover.addEventListener('click', () => {
+	selectRandom();
+	play();
+});
 
 copyButton.addEventListener('click', event => {
 	const btn = event.target;
