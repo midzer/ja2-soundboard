@@ -313,7 +313,7 @@ function playQuote(mercIndex, quoteIndex) {
 let audioQuote;
 playQuoteButton.addEventListener('click', () => {
 	const mercIndex = mercSelect.selectedIndex;
-    const quoteIndex = parseInt(quoteSelect.options[quoteSelect.selectedIndex].value, 10);
+    const quoteIndex = parseInt(quoteSelect.options[quoteSelect.selectedIndex].value);
     playQuote(mercIndex, quoteIndex);
 });
 
@@ -328,7 +328,7 @@ function selectRandom() {
 	const quoteOption = options[Math.floor(Math.random() * options.length)];
 	quoteSelect.value = quoteOption.value;
 
-	const quoteIndex = parseInt(quoteOption.value, 10);
+	const quoteIndex = parseInt(quoteOption.value);
 	playQuote(mercIndex, quoteIndex);
 }
 
@@ -374,8 +374,8 @@ playMusicButton.addEventListener('click', () => {
 
 document.addEventListener("DOMContentLoaded", () => {
 	const params = new URLSearchParams(window.location.search);
-    const mercIndex = parseInt(params.get('merc'), 10);
-    const quoteIndex = parseInt(params.get('quote'), 10);
+    const mercIndex = parseInt(params.get('merc'));
+    const quoteIndex = parseInt(params.get('quote'));
 
     if (!Number.isNaN(mercIndex) && NPCIDs[mercIndex]) {
         mercSelect.selectedIndex = mercIndex;
@@ -383,7 +383,7 @@ document.addEventListener("DOMContentLoaded", () => {
         createQuotes();
 
         for (let i = 0; i < quoteSelect.length; i++) {
-            if (parseInt(quoteSelect.options[i].value, 10) === quoteIndex) {
+            if (parseInt(quoteSelect.options[i].value) === quoteIndex) {
                 quoteSelect.selectedIndex = i;
                 break;
             }
