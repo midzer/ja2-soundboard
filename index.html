@@ -22,9 +22,9 @@
             width: 100%;
             max-width: 106px;
         }
-        fieldset > select,
-        fieldset > button {
-            margin-top: 0.5rem;
+        select:not(:first-child),
+        button:not(:first-child) {
+            margin-top: 0.25rem;
         }
         #bg,
         img,
@@ -44,19 +44,18 @@
             height: auto;
         }
         .controls {
-            display: flex;
-            align-items: start;
-            margin-top: 0.5rem;
-            margin-left: 0.5rem;
+            display: grid;
+            grid-template-columns: auto auto;
+            max-width: 276px;
+            margin: 0.25rem;
         }
-        body > fieldset {
-            position: fixed;
-            bottom: 0;
-            margin: 0.5rem;
+        .controls > :first-child {
+            grid-row: 1 / 4;
         }
         pre {
             white-space: pre-wrap;
             margin: 0;
+            font-size: 10px;
         }
         .img-wrapper {
             position: relative;
@@ -184,12 +183,12 @@
                 </select>
                 <button id="playMusic">Play</button>
             </fieldset>
+            <fieldset>
+                <legend>Text</legend>
+                <pre id="text"></pre>
+            </fieldset>
         </div>
     </div>
-    <fieldset>
-        <legend>Text</legend>
-        <pre id="text"></pre>
-    </fieldset>
     <a href="https://github.com/midzer/ja2-soundboard" class="github-corner" aria-label="View source on GitHub">
         <svg xmlns="http://www.w3.org/2000/svg" class="github-corner" width="80" height="80" viewBox="0 0 250 250" fill="#151513">
             <path d="M0 0l115 115h15l12 27 108 108V0z" fill="#fff"></path>
