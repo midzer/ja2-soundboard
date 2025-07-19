@@ -241,10 +241,10 @@ function createOption(select, array, i) {
 	select.add(option);
 }
 
-function createQuotes() {
+function createQuotes(mercIndex) {
 	quoteSelect.innerHTML = '';
 
-	const isAIMMerc = mercSelect.selectedIndex <= 39;
+	const isAIMMerc = mercIndex <= 39;
     const totalQuotes = DialogQuoteIDs.length;
     const skipStartIndex = isAIMMerc ? 0 : totalQuotes - 38;
 
@@ -262,19 +262,26 @@ function setImage(face) {
 	mercImage.alt = 'Avatar of ' + face;
 }
 
+function updateMercSelection(index) {
+    let face = NPCIDs[index];
+
+    if (index >= 51 && index <= 53) {
+        face = 'IMP_M' + Math.floor(Math.random() * 8);
+    }
+    if (index >= 54 && index <= 56) {
+        face = 'IMP_W' + Math.floor(Math.random() * 8);
+    }
+
+    setImage(face);
+    createQuotes(index);
+}
+
 for (let i = 0; i < NPCIDs.length; i++) {
 	createOption(mercSelect, NPCIDs, i);
 }
 
 mercSelect.addEventListener('change', () => {
-	const idx = mercSelect.selectedIndex;
-	let face = mercSelect.options[idx].text;
-
-	if (idx >= 51 && idx <= 53) face = 'IMP_M' + Math.floor(Math.random() * 8);
-	if (idx >= 54 && idx <= 56) face = 'IMP_W' + Math.floor(Math.random() * 8);
-
-	setImage(face);
-	createQuotes();
+	updateMercSelection(mercSelect.selectedIndex);
 });
 
 function padToThree(num) {
@@ -323,8 +330,7 @@ function selectRandom() {
 	const mercIndex = Math.floor(Math.random() * NPCIDs.length);
 	mercSelect.selectedIndex = mercIndex;
 
-	setImage(NPCIDs[mercIndex]);
-	createQuotes();
+	updateMercSelection(mercIndex);
 
 	const options = quoteSelect.options;
 	const quoteOption = options[Math.floor(Math.random() * options.length)];
@@ -381,8 +387,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!Number.isNaN(mercIndex) && NPCIDs[mercIndex]) {
         mercSelect.selectedIndex = mercIndex;
-        setImage(NPCIDs[mercIndex]);
-        createQuotes();
+        updateMercSelection(mercIndex);
 
         for (let i = 0; i < quoteSelect.length; i++) {
             if (parseInt(quoteSelect.options[i].value) === quoteIndex) {
